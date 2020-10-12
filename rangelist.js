@@ -8,20 +8,17 @@ class RangeList {
     }
 
     add(range) {
-        console.log("Inserting: " + range)
         if (!this.validateRange(range))
             throw Error("Invalid Parameter: range")
         range[0] = parseInt(range[0])
         range[1] = parseInt(range[1])
 
         let overlappedIntervals = this.intervalTree.search(range);
-        console.log("Overlapped Intervals: " + overlappedIntervals)
         if (overlappedIntervals.length === 0)
             this.intervalTree.insert(range)
         else {
             let newInterval = new Interval(range[0], range[1])
             overlappedIntervals.forEach((value) => {
-                console.log(value)
                 let existInterval = new Interval(value[0], value[1])
                 newInterval = newInterval.merge(existInterval)
                 this.intervalTree.remove(value)
@@ -36,7 +33,6 @@ class RangeList {
      * @param {Array<number>} beginning and end of range.
      */
     remove(range) {
-        console.log("Removing: " + range)
         if (!this.validateRange(range))
             throw Error("Invalid Parameter: range")
         range[0] = parseInt(range[0])
@@ -45,7 +41,6 @@ class RangeList {
             return
 
         let overlappedIntervals = this.intervalTree.search(range);
-        console.log("Overlapped Intervals: " + overlappedIntervals)
 
         let removingInterval = range;
         overlappedIntervals.forEach((value) => {
@@ -63,6 +58,7 @@ class RangeList {
         console.log(this.intervalTree.keys)
     }
 
+    //Validate the range parameter
     //Range should be like this [low, high] format
     validateRange(range) {
         if (!range)
@@ -78,7 +74,10 @@ class RangeList {
         return true
     }
 
-    //The assumption is interval and toRemove has overlap region
+    // Compute range1 - range2 
+    // e.g. [1,10] - [2,3] = [[1,2],[3,10]]
+    // e.g. [1,10] - [-1,3] = [[3,10]]
+    // e.g. [1,10] - [-2,11] = []
     diffInterval(inteval, toRemove) {
         if (!this.validateRange(inteval) || !this.validateRange(toRemove))
             throw Error("Invalid Parameter: range")
